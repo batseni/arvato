@@ -11,8 +11,8 @@ import static io.restassured.RestAssured.*;
 
 public class BaseUtil {
 
+    /*API base util*/
     public JsonPath postRequest(String object, int expectedStatusCode, String responseContentType, String authKey) {
-
 
         RequestSpecification spec = given()
                 .headers("X-Auth-Key", authKey(authKey), "Content-Type", responseContentType)
@@ -20,19 +20,17 @@ public class BaseUtil {
                 .body(object)
                 .log().all();
 
-
         Response httpResponse = spec.post(endPointUri(TEST_API_ENDPOINT) + bankAccountUri(BANK_ACCOUNT_URI));
 
         if (expectedStatusCode != httpResponse.getStatusCode()) {
-            System.out.println(httpResponse.asString());
-
+            httpResponse.prettyPrint();
         }
 
         System.out.println("Request statusCode is " + httpResponse.getStatusCode());
 
         return new JsonPath(httpResponse.asString());
-
     }
+
 
     public static String authKey(String key) {
 

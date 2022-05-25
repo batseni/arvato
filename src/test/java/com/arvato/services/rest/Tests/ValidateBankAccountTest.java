@@ -2,7 +2,6 @@ package com.arvato.services.rest.Tests;
 
 import com.arvato.services.rest.Common.utils.BankAccountUtil;
 import io.restassured.path.json.JsonPath;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,7 +14,8 @@ import static org.hamcrest.Matchers.containsString;
 public class ValidateBankAccountTest {
 
     JsonPath response;
-    private final String VALID_BANK_ACCOUNT = "NL07ABNA2847123288";
+    private String givenValidBankAccount;
+    private String andValidAuthToken;
 
     @Rule
     public ErrorCollector collector = new ErrorCollector();
@@ -36,10 +36,11 @@ public class ValidateBankAccountTest {
      */
     @Test
     public void BankAccountValidationIsTrue() {
-
-        response = new BankAccountUtil().validateBankAccount(VALID_BANK_ACCOUNT, STATUS_CODE_TRUE, CONTENT_TYPE_JSON,
-                AUTH_KEY);
-        collector.checkThat(response.get("isValid").toString(), containsString("true"));
+        givenValidBankAccount = "NL07ABNA2847123288";
+        andValidAuthToken = AUTH_KEY;
+        response = WhenBankAccountValidationRequestIsSentToTheServer(givenValidBankAccount, andValidAuthToken,
+                STATUS_CODE_TRUE);
+        ThenServerRespondsWith200AndBodyContainsIsValidTrue(response);
 
     }
 
@@ -51,14 +52,11 @@ public class ValidateBankAccountTest {
      */
     @Test
     public void UnauthorizedBankAccountValidation() {
-
-        String EMPTY_AUTH_TOKEN = "";
-
-        response = new BankAccountUtil().validateBankAccount(VALID_BANK_ACCOUNT, STATUS_UNAUTHORIZED, "",
-                EMPTY_AUTH_TOKEN);
-        collector.checkThat(response.get("message").toString(),
-                containsString("Authorization has been denied for this request."));
-
+        givenValidBankAccount = "NL07ABNA2847123288";
+        String AND_INVALID_AUTH_TOKEN = "";
+        response = WhenBankAccountValidationRequestIsSentToTheServer(givenValidBankAccount, AND_INVALID_AUTH_TOKEN,
+                STATUS_UNAUTHORIZED);
+        ThenServerRespondsWith401AndBodyContainsDeniedMessage(response);
     }
 
     /**
@@ -69,20 +67,11 @@ public class ValidateBankAccountTest {
      */
     @Test
     public void ShortBankAccountValidation() {
-
-        String shortBankAccount = "GB09HA";
-
-        response = new BankAccountUtil().validateBankAccount(shortBankAccount, STATUS_BAD_REQUEST, CONTENT_TYPE_JSON,
-                AUTH_KEY);
-        collector.checkThat(response.get("type").toString(), containsString("BusinessError"));
-        collector.checkThat(response.get("code").toString(), containsString("400.006"));
-        collector.checkThat(response.get("message").toString(),
-                containsString("A string value with minimum length 7 is required"));
-        collector.checkThat(response.get("customerFacingMessage").toString(),
-                containsString("A string value with minimum length 7 is required"));
-        collector.checkThat(response.get("actionCode").toString(), containsString("AskConsumerToReEnterData"));
-        collector.checkThat(response.get("fieldReference").toString(), containsString("bankAccount"));
-
+        String givenShortBankAccount = "GB09HA";
+        andValidAuthToken = AUTH_KEY;
+        response = WhenBankAccountValidationRequestIsSentToTheServer(givenShortBankAccount, andValidAuthToken,
+                STATUS_BAD_REQUEST);
+        ThenServerRespondsWith400AndBodyContainsToShortBankAccountMessage(response);
     }
 
     /**
@@ -93,11 +82,54 @@ public class ValidateBankAccountTest {
      */
     @Test
     public void LongBankAccountValidation() {
+        String givenLongBankAccount = "GB09HAOE913118080023171234567890123";
+        andValidAuthToken = AUTH_KEY;
+        response = WhenBankAccountValidationRequestIsSentToTheServer(givenLongBankAccount, andValidAuthToken,
+                STATUS_BAD_REQUEST);
+        ThenServerRespondsWith400AndBodyContainsToLongBankAccountMessage(response);
+    }
 
-        String LONG_BANK_ACCOUNT = "GB09HAOE913118080023171234567890123";
+    /**
+     * The purpose of this test is to verify error messages in case of invalid bank account number
+     */
+    @Test
+    public void InvalidBankAccountValidation() {
+        String givenInvalidBankAccount = "LI8808800262 172\tAC 439897313";
+        andValidAuthToken = AUTH_KEY;
+        response = WhenBankAccountValidationRequestIsSentToTheServer(givenInvalidBankAccount, andValidAuthToken,
+                STATUS_CODE_TRUE);
+        ThenServerRespondsWith200AndBodyContainsNotSupportedBankAccountMessage(response);
+    }
 
-        response = new BankAccountUtil().validateBankAccount(LONG_BANK_ACCOUNT, STATUS_BAD_REQUEST, CONTENT_TYPE_JSON,
-                AUTH_KEY);
+    /*Validations*/
+    private static void ThenServerRespondsWith200AndBodyContainsIsValidTrue(JsonPath response) {
+        ErrorCollector collector = new ErrorCollector();
+        collector.checkThat(response.get("isValid").toString(), containsString("true"));
+    }
+
+    private static void ThenServerRespondsWith401AndBodyContainsDeniedMessage
+            (JsonPath response) {
+        ErrorCollector collector = new ErrorCollector();
+        collector.checkThat(response.get("message").toString(),
+                containsString("Authorization has been denied for this request."));
+    }
+
+    private static void ThenServerRespondsWith400AndBodyContainsToShortBankAccountMessage
+            (JsonPath response) {
+        ErrorCollector collector = new ErrorCollector();
+        collector.checkThat(response.get("type").toString(), containsString("BusinessError"));
+        collector.checkThat(response.get("code").toString(), containsString("400.006"));
+        collector.checkThat(response.get("message").toString(),
+                containsString("A string value with minimum length 7 is required"));
+        collector.checkThat(response.get("customerFacingMessage").toString(),
+                containsString("A string value with minimum length 7 is required"));
+        collector.checkThat(response.get("actionCode").toString(), containsString("AskConsumerToReEnterData"));
+        collector.checkThat(response.get("fieldReference").toString(), containsString("bankAccount"));
+    }
+
+    private static void ThenServerRespondsWith400AndBodyContainsToLongBankAccountMessage
+            (JsonPath response) {
+        ErrorCollector collector = new ErrorCollector();
         collector.checkThat(response.get("type").toString(), containsString("BusinessError"));
         collector.checkThat(response.get("code").toString(), containsString("400.005"));
         collector.checkThat(response.get("message").toString(),
@@ -106,18 +138,11 @@ public class ValidateBankAccountTest {
                 containsString("A string value exceeds maximum length of 34"));
         collector.checkThat(response.get("actionCode").toString(), containsString("AskConsumerToReEnterData"));
         collector.checkThat(response.get("fieldReference").toString(), containsString("bankAccount"));
-
     }
 
-    /**
-     * The purpose of this test is to verify error messages in case of invalid bank account number
-     */
-    @Test
-    public void InvalidBankAccountValidation() {
-
-        String invalidBankAccount = "LI8808800262 172\tAC 439897313";
-        response = new BankAccountUtil().validateBankAccount(invalidBankAccount, STATUS_CODE_TRUE, CONTENT_TYPE_JSON,
-                AUTH_KEY);
+    private static void ThenServerRespondsWith200AndBodyContainsNotSupportedBankAccountMessage
+            (JsonPath response) {
+        ErrorCollector collector = new ErrorCollector();
         collector.checkThat(response.get("isValid").toString(), containsString("false"));
         collector.checkThat(response.get("riskCheckMessages.type").toString(), containsString("BusinessError"));
         collector.checkThat(response.get("riskCheckMessages.code").toString(), containsString("200.909"));
@@ -129,12 +154,19 @@ public class ValidateBankAccountTest {
                 containsString("AskConsumerToReEnterData"));
         collector.checkThat(response.get("riskCheckMessages.fieldReference").toString(),
                 containsString("bankAccount"));
+    }
 
+    private JsonPath WhenBankAccountValidationRequestIsSentToTheServer(String bankAccount, String authToken,
+                                                                       int statusCode) {
+        response = new BankAccountUtil().validateBankAccount(bankAccount, statusCode, authToken);
+        return response;
     }
 
     /*
      * Possible tests:
      * 1. Negative test. Verify service with incorrect uri
      */
+
+
 
 }
