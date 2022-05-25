@@ -162,7 +162,6 @@ public class ValidateBankAccountTest {
         return response;
     }
 
-
     /*
      * Possible tests:
      * 1. Negative test. Verify service with incorrect uri
