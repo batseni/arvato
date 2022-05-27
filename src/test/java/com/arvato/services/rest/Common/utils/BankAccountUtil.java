@@ -18,8 +18,4 @@ public class BankAccountUtil extends BaseUtil {
 
     }
 
-    public static void getStatusCode(Response httpResponse) {
-        System.out.println("Request statusCode is " + httpResponse.getStatusCode());
-    }
-
 }
