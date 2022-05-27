@@ -5,6 +5,10 @@ import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import java.time.Duration;
 
 import static com.arvato.services.rest.Common.Constants.*;
 import static io.restassured.RestAssured.*;
@@ -59,5 +63,33 @@ public class BaseUtil {
         }
         return endPointPath;
     }
+
+    /*Web base util*/
+    public static WebDriver chrome_driver = new ChromeDriver();
+    public static String baseURL = "https://ac.myafterpay.com/en-se";
+
+    public static void GivenCustomerIsInLoginPage(){
+        chrome_driver.navigate().to(baseURL);
+    }
+
+    public static void AndPrivacySettingsAccepted() {
+        WebElement shadowHost = chrome_driver.findElement(By.cssSelector("#usercentrics-root"));
+        SearchContext shadowRoot = shadowHost.getShadowRoot();
+        WebElement shadowContent = shadowRoot.findElement(By.
+                cssSelector("div[data-testid=uc-buttons-container] > button[data-testid=uc-accept-all-button]"));
+        shadowContent.click();
+    }
+
+    public static void AndGivenWebPageIsClosed(){
+        chrome_driver.quit();
+    }
+
+    public static void setDriverAndOpenBrowser() {
+        System.setProperty("webdriver.chrome.driver", "C:\\dev\\arvato\\chromedriver.exe");
+        chrome_driver.get(baseURL);
+        chrome_driver.manage().window().maximize();
+        chrome_driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+    }
+
 
 }
