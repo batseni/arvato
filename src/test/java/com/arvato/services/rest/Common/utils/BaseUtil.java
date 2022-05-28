@@ -37,17 +37,15 @@ public class BaseUtil {
 
 
     public static String authKey(String key) {
-
-        String authKey = System.getProperty("auth.key");
-        if (authKey == null) {
-            authKey = key;
+        String authKey = key;
+        if (key == null) {
+            authKey = System.getProperty("auth.key");
         }
-        return authKey;
 
+        return authKey;
     }
 
     public static String bankAccountUri(String accountUri) {
-
         String basePath = System.getProperty("request.uri");
         if (basePath == null) {
             basePath = accountUri;
@@ -56,7 +54,6 @@ public class BaseUtil {
     }
 
     public static String endPointUri(String endpoint) {
-
         String endPointPath = System.getProperty("endpoint.uri");
         if (endPointPath == null) {
             endPointPath = endpoint;

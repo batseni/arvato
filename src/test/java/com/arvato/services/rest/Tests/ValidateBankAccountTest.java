@@ -19,7 +19,6 @@ public class ValidateBankAccountTest {
 
     @Rule
     public ErrorCollector collector = new ErrorCollector();
-    /*SoftAssertions softly = new SoftAssertions();*/
     @Rule public TestName name = new TestName();
 
     @Before
@@ -38,10 +37,9 @@ public class ValidateBankAccountTest {
     public void BankAccountValidationIsTrue() {
         givenValidBankAccount = "NL07ABNA2847123288";
         andValidAuthToken = AUTH_KEY;
-        response = WhenBankAccountValidationRequestIsSentToTheServer(givenValidBankAccount, andValidAuthToken,
-                STATUS_CODE_TRUE);
+        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenValidBankAccount,
+                andValidAuthToken, STATUS_CODE_TRUE);
         ThenServerRespondsWith200AndBodyContainsIsValidTrue(response);
-
     }
 
     /**
@@ -53,9 +51,9 @@ public class ValidateBankAccountTest {
     @Test
     public void UnauthorizedBankAccountValidation() {
         givenValidBankAccount = "NL07ABNA2847123288";
-        String AND_INVALID_AUTH_TOKEN = "";
-        response = WhenBankAccountValidationRequestIsSentToTheServer(givenValidBankAccount, AND_INVALID_AUTH_TOKEN,
-                STATUS_UNAUTHORIZED);
+        String AND_INVALID_AUTH_TOKEN = " ";
+        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenValidBankAccount,
+                AND_INVALID_AUTH_TOKEN, STATUS_UNAUTHORIZED);
         ThenServerRespondsWith401AndBodyContainsDeniedMessage(response);
     }
 
@@ -69,8 +67,8 @@ public class ValidateBankAccountTest {
     public void ShortBankAccountValidation() {
         String givenShortBankAccount = "GB09HA";
         andValidAuthToken = AUTH_KEY;
-        response = WhenBankAccountValidationRequestIsSentToTheServer(givenShortBankAccount, andValidAuthToken,
-                STATUS_BAD_REQUEST);
+        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenShortBankAccount,
+                andValidAuthToken, STATUS_BAD_REQUEST);
         ThenServerRespondsWith400AndBodyContainsToShortBankAccountMessage(response);
     }
 
@@ -84,8 +82,8 @@ public class ValidateBankAccountTest {
     public void LongBankAccountValidation() {
         String givenLongBankAccount = "GB09HAOE913118080023171234567890123";
         andValidAuthToken = AUTH_KEY;
-        response = WhenBankAccountValidationRequestIsSentToTheServer(givenLongBankAccount, andValidAuthToken,
-                STATUS_BAD_REQUEST);
+        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenLongBankAccount,
+                andValidAuthToken, STATUS_BAD_REQUEST);
         ThenServerRespondsWith400AndBodyContainsToLongBankAccountMessage(response);
     }
 
@@ -96,8 +94,8 @@ public class ValidateBankAccountTest {
     public void InvalidBankAccountValidation() {
         String givenInvalidBankAccount = "LI8808800262 172\tAC 439897313";
         andValidAuthToken = AUTH_KEY;
-        response = WhenBankAccountValidationRequestIsSentToTheServer(givenInvalidBankAccount, andValidAuthToken,
-                STATUS_CODE_TRUE);
+        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenInvalidBankAccount,
+                andValidAuthToken, STATUS_CODE_TRUE);
         ThenServerRespondsWith200AndBodyContainsNotSupportedBankAccountMessage(response);
     }
 
@@ -156,17 +154,9 @@ public class ValidateBankAccountTest {
                 containsString("bankAccount"));
     }
 
-    private JsonPath WhenBankAccountValidationRequestIsSentToTheServer(String bankAccount, String authToken,
-                                                                       int statusCode) {
-        response = new BankAccountUtil().validateBankAccount(bankAccount, statusCode, authToken);
-        return response;
-    }
-
     /*
      * Possible tests:
      * 1. Negative test. Verify service with incorrect uri
      */
-
-
 
 }

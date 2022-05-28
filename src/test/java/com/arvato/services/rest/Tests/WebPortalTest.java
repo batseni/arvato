@@ -20,12 +20,6 @@ public class WebPortalTest {
         AndGivenWebPageIsClosed();
     }
 
-    public void main(String[] args) {
-        CustomerSeesMessageThatEmailIsSent();
-        CustomerSeesErrorMessageWhenInvalidInformationInserted();
-        CustomerSeesErrorMessageWhenInformationOfNonExistingCustomerIsInserted();
-    }
-
     @Test
     public void CustomerSeesMessageThatEmailIsSent() {
         GivenCustomerIsInLoginPage();
@@ -35,6 +29,7 @@ public class WebPortalTest {
         ThenCustomerIsRedirectedToAuthenticationConfirmationPage();
         AndYouGotMailMessageIsShown();
     }
+
     @Test
     public void CustomerSeesErrorMessageWhenInvalidInformationInserted() {
         GivenCustomerIsInLoginPage();
@@ -42,6 +37,7 @@ public class WebPortalTest {
         AndCustomerInsertsInvalidEmailAddress();
         ThenErrorValidationMessageIsShown();
     }
+
     @Test
     public void CustomerSeesErrorMessageWhenInformationOfNonExistingCustomerIsInserted() {
         GivenCustomerIsInLoginPage();
