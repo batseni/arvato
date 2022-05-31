@@ -1,7 +1,9 @@
 package com.arvato.services.rest.Common.utils;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.*;
+
+import java.io.File;
 
 import static com.arvato.services.rest.Common.utils.BaseUtil.chrome_driver;
 
@@ -62,4 +64,11 @@ public class WebPortalUtil {
         catch(Exception ignored){
         }
     }
+
+    public void standartTestTearDown() throws Exception {
+        TakesScreenshot scrShot =((TakesScreenshot)chrome_driver);
+        File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
+        FileUtils.copyFile(SrcFile , new File("C:\\dev\\arvato\\screenshot.png"));
+    }
+
 }
