@@ -5,7 +5,7 @@ import org.openqa.selenium.*;
 
 import java.io.File;
 
-import static com.arvato.services.rest.Common.utils.BaseUtil.chrome_driver;
+import static com.arvato.services.rest.Common.utils.WebBaseUtil.chrome_driver;
 
 public class WebPortalUtil {
 

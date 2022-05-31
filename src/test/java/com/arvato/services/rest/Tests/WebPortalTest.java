@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.testng.annotations.Listeners;
 
-import static com.arvato.services.rest.Common.utils.BaseUtil.*;
+import static com.arvato.services.rest.Common.utils.WebBaseUtil.*;
 import static com.arvato.services.rest.Common.utils.WebPortalUtil.*;
 
 @Listeners(com.arvato.services.rest.Common.utils.Listeners.class)

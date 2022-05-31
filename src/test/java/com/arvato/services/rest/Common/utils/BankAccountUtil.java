@@ -5,7 +5,7 @@ import jakarta.json.Json;
 
 import static com.arvato.services.rest.Common.Constants.CONTENT_TYPE_JSON;
 
-public class BankAccountUtil extends BaseUtil {
+public class BankAccountUtil extends APIBaseUtil {
 
     public JsonPath validateBankAccount(String bankAccount, int statusCode, String authKey) {
 
