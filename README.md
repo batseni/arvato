@@ -36,4 +36,9 @@ Reporting:
 1. Cucumber report is saved to arvato\target\cucumber-reports project folder
 2. For BDD reports additionally report link is thrown and report can be viewd at 
    https://reports.cucumber.io/reports web page
-   
+
+Think out of the box and add edge cases (BDD scenarios for API and UI) 
+which are not explicitly stated in the assignment (no need to automate).
+1. Possible BDD tests are added to src/main/resources/UiAndApiPossibleTests.feature
+2. Also some additional tests are automated in src/test/java/com/arvato/services/rest/Tests/ValidateBankAccountTest.java 
+   and can be converted to BDD

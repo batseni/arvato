@@ -7,10 +7,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.TestName;
+import org.testng.annotations.Listeners;
 
 import static com.arvato.services.rest.Common.Constants.*;
 import static org.hamcrest.Matchers.containsString;
 
+@Listeners(com.arvato.services.rest.Common.utils.Listeners.class)
 public class ValidateBankAccountTest {
 
     JsonPath response;
@@ -139,10 +141,5 @@ public class ValidateBankAccountTest {
         collector.checkThat(response.get("riskCheckMessages.fieldReference").toString(),
                 containsString("bankAccount"));
     }
-
-    /*
-     * Possible tests:
-     * 1. Negative test. Verify service with incorrect uri
-     */
 
 }
