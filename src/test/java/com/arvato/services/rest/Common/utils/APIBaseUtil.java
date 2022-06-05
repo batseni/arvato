@@ -12,7 +12,7 @@ import static io.restassured.RestAssured.*;
 public class APIBaseUtil {
 
     /*API base util*/
-    public JsonPath postRequest(String object, int expectedStatusCode, String responseContentType, String authKey) {
+    public JsonPath postRequest(String object, int expectedStatusCode, ContentType responseContentType, String authKey) {
 
         RequestSpecification spec = given()
                 .headers("X-Auth-Key", authKey(authKey), "Content-Type", responseContentType)

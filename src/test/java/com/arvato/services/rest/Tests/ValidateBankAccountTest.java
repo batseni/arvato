@@ -14,8 +14,6 @@ import static org.hamcrest.Matchers.containsString;
 public class ValidateBankAccountTest {
 
     JsonPath response;
-    private String givenValidBankAccount;
-    private String andValidAuthToken;
 
     @Rule
     public ErrorCollector collector = new ErrorCollector();
@@ -35,11 +33,9 @@ public class ValidateBankAccountTest {
      */
     @Test
     public void BankAccountValidationIsTrue() {
-        givenValidBankAccount = "NL07ABNA2847123288";
-        andValidAuthToken = AUTH_KEY;
-        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenValidBankAccount,
-                andValidAuthToken, STATUS_CODE_TRUE);
-        ThenServerRespondsWith200AndBodyContainsIsValidTrue(response);
+
+        response = new BankAccountUtil().validateBankAccount(VALID_BANK_ACCOUNT, STATUS_CODE_TRUE, AUTH_KEY);
+        BodyContainsIsValidTrue(response);
     }
 
     /**
@@ -50,11 +46,11 @@ public class ValidateBankAccountTest {
      */
     @Test
     public void UnauthorizedBankAccountValidation() {
-        givenValidBankAccount = "NL07ABNA2847123288";
-        String AND_INVALID_AUTH_TOKEN = " ";
-        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenValidBankAccount,
-                AND_INVALID_AUTH_TOKEN, STATUS_UNAUTHORIZED);
-        ThenServerRespondsWith401AndBodyContainsDeniedMessage(response);
+
+        String INVALID_AUTH_TOKEN = " ";
+        response = new BankAccountUtil().validateBankAccount(VALID_BANK_ACCOUNT, STATUS_UNAUTHORIZED,
+                INVALID_AUTH_TOKEN);
+        BodyContainsDeniedMessage(response);
     }
 
     /**
@@ -65,11 +61,9 @@ public class ValidateBankAccountTest {
      */
     @Test
     public void ShortBankAccountValidation() {
-        String givenShortBankAccount = "GB09HA";
-        andValidAuthToken = AUTH_KEY;
-        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenShortBankAccount,
-                andValidAuthToken, STATUS_BAD_REQUEST);
-        ThenServerRespondsWith400AndBodyContainsToShortBankAccountMessage(response);
+        String SHORT_BANK_ACCOUNT = "GB09HA";
+        response = new BankAccountUtil().validateBankAccount(SHORT_BANK_ACCOUNT, STATUS_BAD_REQUEST, AUTH_KEY);
+        BodyContainsToShortBankAccountMessage(response);
     }
 
     /**
@@ -80,11 +74,9 @@ public class ValidateBankAccountTest {
      */
     @Test
     public void LongBankAccountValidation() {
-        String givenLongBankAccount = "GB09HAOE913118080023171234567890123";
-        andValidAuthToken = AUTH_KEY;
-        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenLongBankAccount,
-                andValidAuthToken, STATUS_BAD_REQUEST);
-        ThenServerRespondsWith400AndBodyContainsToLongBankAccountMessage(response);
+        String LONG_BANK_ACCOUNT = "GB09HAOE913118080023171234567890123";
+        response = new BankAccountUtil().validateBankAccount(LONG_BANK_ACCOUNT, STATUS_BAD_REQUEST, AUTH_KEY);
+        BodyContainsToLongBankAccountMessage(response);
     }
 
     /**
@@ -92,28 +84,24 @@ public class ValidateBankAccountTest {
      */
     @Test
     public void InvalidBankAccountValidation() {
-        String givenInvalidBankAccount = "LI8808800262 172\tAC 439897313";
-        andValidAuthToken = AUTH_KEY;
-        response = new BankAccountUtil().WhenBankAccountValidationRequestIsSentToTheServer(givenInvalidBankAccount,
-                andValidAuthToken, STATUS_CODE_TRUE);
-        ThenServerRespondsWith200AndBodyContainsNotSupportedBankAccountMessage(response);
+        String INVALID_BANK_ACCOUNT = "LI8808800262 172\tAC 439897313";
+        response = new BankAccountUtil().validateBankAccount(INVALID_BANK_ACCOUNT, STATUS_CODE_TRUE, AUTH_KEY);
+        BodyContainsNotSupportedBankAccountMessage(response);
     }
 
     /*Validations*/
-    private static void ThenServerRespondsWith200AndBodyContainsIsValidTrue(JsonPath response) {
+    private static void BodyContainsIsValidTrue(JsonPath response) {
         ErrorCollector collector = new ErrorCollector();
         collector.checkThat(response.get("isValid").toString(), containsString("true"));
     }
 
-    private static void ThenServerRespondsWith401AndBodyContainsDeniedMessage
-            (JsonPath response) {
+    private static void BodyContainsDeniedMessage(JsonPath response) {
         ErrorCollector collector = new ErrorCollector();
         collector.checkThat(response.get("message").toString(),
                 containsString("Authorization has been denied for this request."));
     }
 
-    private static void ThenServerRespondsWith400AndBodyContainsToShortBankAccountMessage
-            (JsonPath response) {
+    private static void BodyContainsToShortBankAccountMessage(JsonPath response) {
         ErrorCollector collector = new ErrorCollector();
         collector.checkThat(response.get("type").toString(), containsString("BusinessError"));
         collector.checkThat(response.get("code").toString(), containsString("400.006"));
@@ -125,8 +113,7 @@ public class ValidateBankAccountTest {
         collector.checkThat(response.get("fieldReference").toString(), containsString("bankAccount"));
     }
 
-    private static void ThenServerRespondsWith400AndBodyContainsToLongBankAccountMessage
-            (JsonPath response) {
+    private static void BodyContainsToLongBankAccountMessage(JsonPath response) {
         ErrorCollector collector = new ErrorCollector();
         collector.checkThat(response.get("type").toString(), containsString("BusinessError"));
         collector.checkThat(response.get("code").toString(), containsString("400.005"));
@@ -138,8 +125,7 @@ public class ValidateBankAccountTest {
         collector.checkThat(response.get("fieldReference").toString(), containsString("bankAccount"));
     }
 
-    private static void ThenServerRespondsWith200AndBodyContainsNotSupportedBankAccountMessage
-            (JsonPath response) {
+    private static void BodyContainsNotSupportedBankAccountMessage(JsonPath response) {
         ErrorCollector collector = new ErrorCollector();
         collector.checkThat(response.get("isValid").toString(), containsString("false"));
         collector.checkThat(response.get("riskCheckMessages.type").toString(), containsString("BusinessError"));
