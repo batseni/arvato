@@ -29,7 +29,7 @@ public class Listeners implements ITestListener {
 
         public void onTestFailure(ITestResult result) {
             System.out.println("***** Error "+result.getName()+" test has failed *****");
-            String methodName=result.getName().toString().trim();
+            String methodName=result.getName().trim();
             ITestContext context = result.getTestContext();
             WebDriver driver = (WebDriver)context.getAttribute("driver");
             takeScreenShot(methodName, driver);
