@@ -25,7 +25,7 @@ public class WebBaseUtil {
         shadowContent.click();
     }
 
-    public static void AndGivenWebPageIsClosed(){
+    public static void closeWebPage(){
         chrome_driver.quit();
     }
 

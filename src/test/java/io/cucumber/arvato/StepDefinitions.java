@@ -13,6 +13,8 @@ import jakarta.json.Json;
 import org.junit.rules.ErrorCollector;
 
 import static com.arvato.services.rest.Common.Constants.*;
+import static com.arvato.services.rest.Common.utils.WebBaseUtil.*;
+import static com.arvato.services.rest.Common.utils.WebPortalUtil.*;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 
@@ -84,6 +86,68 @@ public class StepDefinitions extends APIBaseUtil {
         ErrorCollector collector = new ErrorCollector();
         collector.checkThat(httpResponse.get("message").toString(),
                 containsString("Authorization has been denied for this request."));
+    }
+
+    @Given("customer is in a login page")
+    public void customerIsInLoginPage() {
+        setDriverAndOpenBrowser();
+        GivenCustomerIsInLoginPage();
+    }
+
+    @And("and privacy settings accepted")
+    public void privacySettingsAccepted() {
+        AndPrivacySettingsAccepted();
+    }
+
+    @When("customer selects create account link")
+    public void customerSelectsCreateAccountLink() {
+        WhenCustomerSelectsCreateAccountLink();
+    }
+
+    @And("customer inserts ’test@gmail.com’ e-mail address")
+    public void customerInsertsEmailAddress() {
+        AndCustomerInsertsEmailAddress();
+    }
+
+    @Then("customer is redirected to the authentication confirmation email page")
+    public void customerRedirectedToAuthConfirmationPage() {
+        ThenCustomerIsRedirectedToAuthenticationConfirmationPage();
+    }
+
+    @And("you got mail message is shown")
+    public void youGotMailIsShown() {
+        AndYouGotMailMessageIsShown();
+    }
+
+    @When("customer selects login with email and password option")
+    public void customerSelectsLoginWithMailAndPasswordOption() {
+        WhenCustomerSelectsLoginWithEmailAndPassword();
+    }
+
+    @And("customer inserts invalid email address")
+    public void customerInsertsInvalidEmailAddress() {
+        AndCustomerInsertsInvalidEmailAddress();
+    }
+
+    @Then("error validation message is shown")
+    public void errorValidationMessageIsShown() {
+        ThenErrorValidationMessageIsShown();
+    }
+
+    @And("customer inserts test email address and some password")
+    public void customerInsertsTestEmailAddressAndSomePassword() {
+        AndCustomerInsertsEmailAddressAndPassword();
+    }
+
+    @Then("customer is redirected to the email and password error page")
+    public void customerIsRedirectedToTheEmailAndPasswordErrorPage() {
+        ThenCustomerIsRedirectedToTheEmailandpasswordErrorPage();
+    }
+
+    @And("error message is shown")
+    public void errorMessageIsShown() {
+        AndErrorMessageIsShown();
+        closeWebPage();
     }
 
 }

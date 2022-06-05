@@ -19,7 +19,7 @@ public class WebPortalTest {
 
     @AfterClass
     public static void tearDown() {
-        AndGivenWebPageIsClosed();
+        closeWebPage();
     }
 
 
